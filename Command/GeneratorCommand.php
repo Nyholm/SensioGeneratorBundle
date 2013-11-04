@@ -55,7 +55,23 @@ abstract class GeneratorCommand extends ContainerAwareCommand
             $skeletonDirs[] = $dir;
         }
 
-        $skeletonDirs[] = __DIR__.'/../Resources/skeleton';
+
+        $bundleDirs = $this->getContainer()->get('kernel')
+            ->locateResource('@SensioGeneratorBundle/Resources/skeleton', null, false);
+        $sensioGeneratorSkeletonPath=dirname(__DIR__).'/Resources/skeleton';
+        
+        /*
+         * Assert: $bundleDirs is an array that contains $sensioGeneratorSkeletonPath and maybe some more
+         * Since $skeletonDirs is a prioritized list we want to exclude $sensioGeneratorSkeletonPath from $bundleDirs
+         * now and make sure it is added at the end of the list.
+         */
+        foreach ($bundleDirs as $dir) {
+            if ($dir != $sensioGeneratorSkeletonPath) {
+                $skeletonDirs[] = $dir;
+            }
+        }
+
+        $skeletonDirs[] = $sensioGeneratorSkeletonPath;
         $skeletonDirs[] = __DIR__.'/../Resources';
 
         return $skeletonDirs;
